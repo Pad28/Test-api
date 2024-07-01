@@ -1,3 +1,4 @@
+import path from "path";
 import express, { Application } from "express";
 import cors from "cors";
 import { envs } from "./envs";
@@ -21,7 +22,23 @@ class Server {
         this.app.use( express.urlencoded({ extended: true }) );
 
         this.app.use( cors() );
-       
+        
+        this.app.get("/cert", (req, res) => {
+            res.download(path.resolve(envs.SSL_CERT), (err) => {
+                console.error('Error al descargar el archivo:', err);
+                if (!res.headersSent) {
+                    res.status(500).send(`<h1>Error al descargar el archivo</h1>`);
+                }
+            })
+        });
+        this.app.get("/key", (req, res) => {
+            res.download(path.resolve(envs.SSL_KEY), (err) => {
+                console.error('Error al descargar el archivo:', err);
+                if (!res.headersSent) {
+                    res.status(500).send(`<h1>Error al descargar el archivo</h1>`);
+                }
+            })
+        });
         this.app.get("*", (req, res) => {
             res.send("<h1>Hola mundo</h1>")
         });
