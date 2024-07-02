@@ -22,25 +22,32 @@ class Server {
         this.app.use( express.urlencoded({ extended: true }) );
 
         this.app.use( cors() );
+        this.app.use( express.static("public") );
         
-        this.app.get("/cert", (req, res) => {
-            res.download(path.resolve(envs.SSL_CERT), (err) => {
-                console.error('Error al descargar el archivo:', err);
-                if (!res.headersSent) {
-                    res.status(500).send(`<h1>Error al descargar el archivo</h1>`);
-                }
-            })
-        });
-        this.app.get("/key", (req, res) => {
-            res.download(path.resolve(envs.SSL_KEY), (err) => {
-                console.error('Error al descargar el archivo:', err);
-                if (!res.headersSent) {
-                    res.status(500).send(`<h1>Error al descargar el archivo</h1>`);
-                }
-            })
-        });
+        this.app.get("/mqtt-code-esp", (req, res) => {
+            res.download(path.resolve(__dirname, "../files/mqttTest.py"));
+        })
+
+        this.app.get("/mqtt-code-movil", (req, res) => {
+            res.download(path.resolve(__dirname, "../files/Sockettest.zip"));
+        })
+        
+        this.app.get("/mqtt-code-movil/main", (req, res) => {
+            res.sendFile(path.resolve(__dirname, "../files/MainActivity.txt"));
+        })
+        this.app.get("/mqtt-code-movil/socket-manager", (req, res) => {
+            res.sendFile(path.resolve(__dirname, "../files/SocketManager.txt"));
+        })
+        this.app.get("/mqtt-code-movil/gradle", (req, res) => {
+            res.sendFile(path.resolve(__dirname, "../files/build.gradle.txt"));
+        })
+
+        this.app.get("/mqtt-code-movil/manifest", (req, res) => {
+            res.sendFile(path.resolve(__dirname, "../files/manifest.txt"));
+        })
+        
         this.app.get("*", (req, res) => {
-            res.send("<h1>Hola mundo</h1>")
+            res.send("<h1>404 | Not found</h1>")
         });
 
         this.app.listen(this.options.port, () => {
